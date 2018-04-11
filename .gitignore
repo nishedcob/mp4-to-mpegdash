@@ -19,3 +19,12 @@ nytprof.out
 *.bs
 /_eumm/
 /tests
+*.mp4
+*.m4s
+audio/
+320/
+640/
+720/
+1280/
+1920/
+2560/
