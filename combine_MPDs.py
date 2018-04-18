@@ -53,6 +53,8 @@ internal_dict['MPD']['Period']['AdaptationSet'].append(
     xmltodict.parse(open(a_trk_file).read())['MPD']['Period']['AdaptationSet']
 )
 
+internal_dict['MPD']['Period']['AdaptationSet'][-1]['Representation']['BaseURL'] = 'audio/'
+
 xml_out = xmltodict.unparse(internal_dict, pretty=True)
 
 print(xml_out)
