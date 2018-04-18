@@ -2,12 +2,21 @@
 
 import xmltodict
 from collections import OrderedDict
+import argparse
 
 #############################################
 
-mpd_name = "WonderWoman2017_10min_dash.mpd"
-video_res = ['320', '640', '720', '1280', '1920', '2560']
-audio_trk = ['audio']
+parser = argparse.ArgumentParser()
+parser.add_argument('-m', '--mpd_name', type=str, default='WonderWoman2017_10min_dash.mpd', help='Name of MPD to Process', dest='mpdname')
+parser.add_argument('-r', '--video_res', type=str, nargs="+", default=['320', '640', '720', '1280', '1920', '2560'], help='Video Resolutions to Process', dest='videores')
+parser.add_argument('-a', '--audio_trk', type=str, nargs="+", default=['audio'], help='Audio Tracks to Process', dest='audiotrk')
+
+#############################################
+
+args = parser.parse_args()
+mpd_name = args.mpdname
+video_res = args.videores
+audio_trk = args.audiotrk
 
 #############################################
 
