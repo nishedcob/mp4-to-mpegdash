@@ -7,12 +7,27 @@ Perl script to convert a MP4 video into MPEG-DASH
 
 # Dependencies
 
-FFmpeg https://www.ffmpeg.org/
-MP4Box https://gpac.wp.mines-telecom.fr/mp4box/
+- FFmpeg https://www.ffmpeg.org/
+- MP4Box https://gpac.wp.mines-telecom.fr/mp4box/
 
 ## Perl Dependencies
 
 XML::Simple
 
+Install with `cpan install XML::Simple`
+
+## Python Dependencies
+
+xmltodict
+
+Install with `pip install xmltodict` or `pipenv install`
+
 # Usage
-`$ perl transcode.pl $FILENAME`
+Original transcoding tool:
+- `$ perl transcode.pl $FILENAME`
+
+MPD Combiner tool:
+- `$ pipenv run python combine_MPDs.py --mpd_name' "$FILENAMEwithoutEXT_dash.mpd"` or `$ python combine_MPDs.py --mpd_name' "$FILENAMEwithoutEXT_dash.mpd"`
+
+Transcode then combine script/tool:
+- `$ ./mp4_to_dash.sh $FILENAMEwithoutEXT`
