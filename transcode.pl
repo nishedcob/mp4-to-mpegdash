@@ -11,6 +11,10 @@ my $config = {
     chunk => '2000',
 };
 
+sub print_line {
+  print "==========================================================\n";
+}
+
 # Pre-defined resolutions
 my $versions = [ '320', '640', '720', '1280', '1920', '2560' ];
 
@@ -18,17 +22,29 @@ sub create_multiple_bitrate_versions {
 	my ($filename) = @_;
 	my $lastVersion = '';
 	for my $_version (@{$versions}){
-		my $r = `ffmpeg -i $filename -vf scale=$_version:-2 -x264opts 'keyint=$config->{keyint}:min-keyint=$config->{keyint}:no-scenecut' -strict -2 -r $config->{framerate} $_version/$filename -y`;
+    print_line();
+    print "ffmpeg -i $filename -vf scale=$_version:-2 -x264opts 'keyint=$config->{keyint}:min-keyint=$config->{keyint}:no-scenecut' -strict -2 -r $config->{framerate} $_version/$filename -y\n";
+    print_line();
+    my $r = `ffmpeg -i $filename -vf scale=$_version:-2 -x264opts 'keyint=$config->{keyint}:min-keyint=$config->{keyint}:no-scenecut' -strict -2 -r $config->{framerate} $_version/$filename -y`;
 		$lastVersion = $_version;
 	}
+  print_line();
+  print "cp $lastVersion/$filename audio/$filename";
+  print_line();
 	my $r = `cp $lastVersion/$filename audio/$filename`;
 }
 
 sub create_multiple_segments {
 	my ($filename) = @_;
 	for my $_version (@{$versions}){
-		my $r = `cd $_version; MP4Box -dash $config->{chunk} -frag $config->{chunk} -rap -frag-rap -profile $config->{profile} $filename#video; rm $filename; cd ..`;
+    print_line();
+    print "cd $_version; MP4Box -dash $config->{chunk} -frag $config->{chunk} -rap -frag-rap -profile $config->{profile} $filename#video; rm $filename; cd ..\n";
+    print_line();
+    my $r = `cd $_version; MP4Box -dash $config->{chunk} -frag $config->{chunk} -rap -frag-rap -profile $config->{profile} $filename#video; rm $filename; cd ..`;
 	}
+  print_line();
+  print "cd audio; MP4Box -dash $config->{chunk} -frag $config->{chunk} -rap -frag-rap -profile $config->{profile} $filename#audio; rm $filename; cd ..\n";
+  print_line();
 	my $r = `cd audio; MP4Box -dash $config->{chunk} -frag $config->{chunk} -rap -frag-rap -profile $config->{profile} $filename#audio; rm $filename; cd ..`;
 }
 
@@ -67,6 +83,9 @@ sub merge_manifests {
 		$manifest->{Period}->{AdaptationSet}->{Representation}->{SegmentTemplate}->{initialization} = "$_/".$manifest->{Period}->{AdaptationSet}->{Representation}->{SegmentTemplate}->{initialization};
 		push @{$base_manifest->{Period}->{AdaptationSet}->[0]->{Representation}}, @{$manifest->{Period}->{AdaptationSet}->{Representation}};
 		my $res_filename = "$_/$filename"."_dash.mpd";
+    print_line();
+    print "rm $res_filename\n";
+    print_line();
 		`rm $res_filename`;
 	}
 	push @{$base_manifest->{Period}->{AdaptationSet}->[0]->{Representation}}, @{$high_representation};
@@ -79,10 +98,16 @@ sub merge_manifests {
 	$manifest->{Period}->{AdaptationSet}->{Representation}->{SegmentTemplate}->{initialization} = "audio/".$manifest->{Period}->{AdaptationSet}->{Representation}->{SegmentTemplate}->{initialization};
 	push @{$base_manifest->{Period}->{AdaptationSet}}, @{$manifest->{Period}->{AdaptationSet}};
 	my $res_filename = "audio/$filename"."_dash.mpd";
+  print_line();
+  print "rm $res_filename\n";
+  print_line();
 	`rm $res_filename`;
 
 	delete $base_manifest->{ProgramInformation};
 	my $high_res_filename = "$high_res/$filename"."_dash.mpd";
+  print_line();
+  print "rm $high_res_filename\n";
+  print_line();
 	`rm $high_res_filename`;
 	open $fd, '>', "$filename"."_dash.mpd" or die "open($filename"."_dash.mpd): $!";
 	$xml->XMLout($base_manifest, OutputFile => $fd, RootName => "MPD", XMLDecl => '<?xml version="1.0"?>' );
@@ -96,10 +121,19 @@ unless( -e $filename ){
 }
 
 # cleanup
+print_line();
+print "rm -rf $_\n" for @{$versions};
+print_line();
 `rm -rf $_` for @{$versions};
 # create folders for the config->ured resolutions
+print_line();
+print "mkdir $_\n" for @{$versions};
+print_line();
 `mkdir $_` for @{$versions};
 # create folders for the audio
+print_line();
+print "mkdir audio\n";
+print_line();
 `mkdir audio`;
 # craate the multiple video bitrates
 create_multiple_bitrate_versions($filename);
