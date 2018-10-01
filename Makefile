@@ -7,12 +7,10 @@ MP4BOX_TO_DASH_UNIVERSAL_FLAGS=-dash 2000 -frag 2000 -rap -frag-rap -profile liv
 
 %.dash: %_dash.mpd
 	-mkdir $@
-	# mv -v $(RESOLUTIONS) $@/
-	# mv -v $< $@/
-	cp -r -v $(RESOLUTIONS) $@/
-	cp -v $< $@/
-	#rm -v `echo $< | sed 's/^(.*).dash$/\1.mp4/'`
+	mv -v $(RESOLUTIONS) $@/
+	mv -v $< $@/
 	rm -v `echo $@ | sed 's/^\(.*\).dash$\/\1.mp4/'`
+	find $@ -iname `echo $@ | sed 's/^\(.*\).dash$\/\1.mp4/'` -delete
 
 ####################################################
 
