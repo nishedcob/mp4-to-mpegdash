@@ -18,7 +18,11 @@ env.install:
 	pipenv --three
 	touch env.install
 
-xmltodict.install: env.install
+dependencies.install: env.install
+	pipenv install
+	touch dependencies.install
+
+xmltodict.install: dependencies.install
 	pipenv install xmltodict
 	touch xmltodict.install
 
@@ -115,7 +119,7 @@ audio/%.mpd: %.mp4 audio/%.mp4
 
 ####################################################
 
-%_dash.mpd: 320/%.mpd 640/%.mpd 720/%.mpd 1280/%.mpd 1920/%.mpd 2560/%.mpd audio/%.mpd
+%_dash.mpd: xmltodict.install 320/%.mpd 640/%.mpd 720/%.mpd 1280/%.mpd 1920/%.mpd 2560/%.mpd audio/%.mpd
 	pipenv run python combine_MPDs.py --mpd_name $@
 
 ####################################################
