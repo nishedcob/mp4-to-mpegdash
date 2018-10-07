@@ -29,5 +29,6 @@ audio/
 2560/
 *.mpd
 env.install
+dependencies.install
 xmltodict.install
 env.created
